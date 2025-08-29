@@ -25,7 +25,7 @@ def load_model_and_data():
     try:
         # Load the clothing ratings dataset from the provided CSV file.
         # Note: You must ensure 'clothing_dataset.csv' is in the same directory.
-        df = pd.read_csv("E:\\Study material\\webdev1\\clothing_dataset.csv")
+        df = pd.read_csv("clothing_dataset.csv")
 
 
         # Create the user-item matrix for collaborative filtering
@@ -131,5 +131,6 @@ async def get_recommendations(request: RecommendationRequest):
         item_name=request.item_id,
         num_recommendations=request.num_recommendations
     )
+
 
     return {"item_id": request.item_id, "recommendations": recommendations}
