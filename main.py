@@ -17,7 +17,6 @@ def load_model_and_data():
     global df, user_item_matrix, model_knn, item_ids
     print("Loading and preparing data...")
     try:
-        # Load the clothing ratings dataset from the provided CSV file.
         df = pd.read_csv("clothing_dataset.csv")
 
         # Create the user-item matrix for collaborative filtering
@@ -94,7 +93,7 @@ async def health_check():
     return {"status": "ok"}
 
 
-# --- RECOMMENDATION ENDPOINT ---
+# --- RECOMMENDATION ENDPOINT (POST) ---
 @app.post("/recommend")
 async def get_recommendations(request: RecommendationRequest):
     global user_item_matrix
@@ -111,5 +110,25 @@ async def get_recommendations(request: RecommendationRequest):
     )
 
     return {"item_id": request.item_id, "recommendations": recommendations}
+
+
+# --- RECOMMENDATION ENDPOINT (GET for browser testing) ---
+@app.get("/recommend")
+async def get_recommendations_query(item_id: str, num_recommendations: int = 5):
+    global user_item_matrix
+
+    if user_item_matrix is None:
+        raise HTTPException(status_code=503, detail="Model is not yet loaded. Please try again later.")
+
+    if item_id not in user_item_matrix.columns:
+        raise HTTPException(status_code=404, detail=f"Item ID '{item_id}' not found.")
+
+    recommendations = recommend_items(
+        item_name=item_id,
+        num_recommendations=num_recommendations
+    )
+
+    return {"item_id": item_id, "recommendations": recommendations}
+
 
 
